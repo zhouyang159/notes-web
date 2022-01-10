@@ -1,25 +1,53 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import NoteList from './components/NoteList';
+import Detail from './components/Detail';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+let tempData = [
+  {
+    id: "random111",
+    content: "Japanese princess to wed commoner.",
+  },
+  {
+    id: "random222",
+    content: "Australian walks 100km after outback crash.",
+  },
+  {
+    id: "random333",
+    content: "Man charged over missing wedding girl.",
+  },
+  {
+    id: "random444",
+    content: "Los Angeles battles huge wildfires.",
+  },
+];
+
+
+const App = () => {
+  const [curNote, setCurNote] = useState(null);
+
+  return <div className="App">
+    {
+      !curNote ?
+        <NoteList noteData={tempData} setCurNote={setCurNote}></NoteList> :
+        <Detail
+          note={curNote} 
+          backToNoteList={(newNote) => {
+            tempData = tempData.map((item) => {
+              if (item.id === newNote.id) {
+                return {
+                  ...item,
+                  content: newNote.content,
+                }
+              }
+              return item;
+            });
+
+            setCurNote(null)
+          }}
+        ></Detail>
+    }
+  </div>
+};
 
 export default App;
