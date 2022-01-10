@@ -1,14 +1,35 @@
 import React from 'react';
-import { Layout, List, Typography } from 'antd';
+import { Button, Layout, List, message, Typography } from 'antd';
 import styled from 'styled-components';
+import axios from 'axios';
 
 
 const Pointer = styled.span`
   cursor: pointer;
 `;
 
+const ListItemLine = styled(List.Item)`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  :hover {
+    .delete_btn {
+      visibility: visible !important;
+    }
+  }
+`;
+
 const NoteList = (props) => {
-  const { noteData, setCurNote } = props;
+  const { noteData, getNotes, viewNote } = props;
+
+  const handleDelete = (note) => {
+    axios.delete(`/notes?id=${note.id}`).then((res) => {
+      if (res.data) {
+        message.success('delete note successfully');
+        getNotes();
+      }
+    });
+  }
 
   return <div className="NoteList">
     <Layout>
@@ -17,9 +38,14 @@ const NoteList = (props) => {
         bordered
         dataSource={noteData}
         renderItem={(note, idx) => (
-          <List.Item key={note.id}>
-            <Typography.Text mark>{idx}、</Typography.Text> <Pointer onClick={() => setCurNote(note)}>{note.content}</Pointer>
-          </List.Item>
+            <ListItemLine key={note.id}>
+              <div>
+                <Typography.Text mark>{idx}、</Typography.Text> <Pointer onClick={() => viewNote(note)}>{note.content}</Pointer>
+              </div>
+              <Button className='delete_btn' style={{ visibility: 'hidden' }} size='small' type='danger' onClick={() => {
+                handleDelete(note);
+              }}>delete</Button>
+            </ListItemLine>
         )}
       />
     </Layout>

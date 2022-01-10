@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Card, Input, Button } from 'antd';
+import { Card, Input, Button, message } from 'antd';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const { TextArea } = Input;
 
@@ -11,8 +12,17 @@ const Footer = styled.div`
 `;
 
 const Detail = (props) => {
-	const { backToNoteList } = props;
+	const { backToList, backToListAndGetNotes } = props;
 	const [note, setNote] = useState(props.note);
+
+	const handleUpdateNote = () => {
+		axios.put('/notes', note).then((res) => {
+			if (res.data) {
+				message.success('update note successfully');
+				backToListAndGetNotes();
+			}
+		});
+	}
 
 
 	return <div className="Detail">
@@ -24,8 +34,8 @@ const Detail = (props) => {
 				});
 			}}></TextArea>
 			<Footer>
-				<Button onClick={() => backToNoteList(note)}>back</Button>
-				<Button type="danger">Save</Button>
+				<Button onClick={backToList}>back</Button>
+				<Button type="danger" onClick={handleUpdateNote}>update</Button>
 			</Footer>
 		</Card>
 	</div>
